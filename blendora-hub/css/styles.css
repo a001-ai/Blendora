@@ -1,0 +1,303 @@
+/* BLENDORA HUB - Custom Stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cinzel:wght@500;600;700&display=swap');
+
+:root {
+  --primary: #C59A65;
+  --primary-hover: #b08552;
+  --primary-light: #F9F4EE;
+  --accent-gold: #D4AF37;
+  --dark: #221F1D;
+  --dark-subtle: #4A443F;
+  --light-bg: #FAF8F5;
+  --card-bg: #FFFFFF;
+  --border-color: #EAE3D9;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--light-bg);
+  color: var(--dark);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-display {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.08em;
+}
+
+/* Glassmorphism with resin-like gloss */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 30px -10px rgba(74, 53, 37, 0.08);
+}
+
+.resin-glass-card {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.resin-glass-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px -10px rgba(197, 154, 101, 0.22);
+}
+
+.resin-glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: 0.75s ease;
+  pointer-events: none;
+}
+
+.resin-glass-card:hover::after {
+  left: 140%;
+}
+
+/* Custom interactive resin preview simulator */
+.resin-preview-box {
+  width: 100%;
+  height: 320px;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f6efe9 70%, #ebdcd0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), 0 15px 35px rgba(197, 154, 101, 0.15);
+}
+
+.resin-pendant-mold {
+  width: 180px;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 3px solid rgba(212, 175, 55, 0.7);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1), inset 0 0 20px rgba(255,255,255,0.8);
+}
+
+.resin-pendant-mold.shape-teardrop {
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  width: 160px;
+  height: 220px;
+}
+
+.resin-pendant-mold.shape-letter {
+  border-radius: 1.25rem;
+  width: 170px;
+  height: 190px;
+}
+
+.resin-pendant-mold.shape-earrings {
+  border-radius: 100px 100px 20px 20px;
+  width: 110px;
+  height: 190px;
+}
+
+.resin-pendant-mold.shape-tag {
+  width: 220px;
+  height: 120px;
+  clip-path: polygon(18% 0%, 82% 0%, 100% 50%, 82% 100%, 18% 100%, 0% 50%);
+  border-radius: 0;
+}
+
+/* Floating shimmer particles */
+.glitter-particle {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, #ffe082);
+  opacity: 0.8;
+  animation: sparkle 2.5s infinite ease-in-out alternate;
+}
+
+@keyframes sparkle {
+  0% { transform: scale(0.6) rotate(0deg); opacity: 0.3; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 0.95; }
+  100% { transform: scale(0.8) rotate(360deg); opacity: 0.4; }
+}
+
+/* Slide-out cart & modal animations */
+.cart-drawer-overlay {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.cart-drawer-panel {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F3ECE2;
+}
+::-webkit-scrollbar-thumb {
+  background: #C59A65;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9D7546;
+}
+
+/* Badge styles */
+.badge-gold {
+  background: linear-gradient(135deg, #ECC880, #C59A65);
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Toast alert notification */
+#toast-notification {
+  transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+#toast-notification.show {
+  transform: translateY(0);
+}
+
+/* ============================================================ */
+/* DARK THEME STYLES (OBSIDIAN & WARM GOLD PALETTE) */
+/* ============================================================ */
+html.dark {
+  --light-bg: #121110;
+  --dark: #FAF8F5;
+  --dark-subtle: #A39B92;
+  --card-bg: #1C1A18;
+  --border-color: #2E2925;
+}
+
+html.dark body {
+  background-color: #121110 !important;
+  color: #FAF8F5 !important;
+}
+
+html.dark header {
+  background-color: rgba(24, 22, 20, 0.95) !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .resin-glass-card {
+  background-color: #1C1A18 !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .bg-white {
+  background-color: #1C1A18 !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .bg-stone-50 {
+  background-color: #24201D !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .bg-stone-100 {
+  background-color: #272320 !important;
+  border-color: #332D28 !important;
+}
+
+html.dark .bg-stone-900 {
+  background-color: #0E0D0C !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .bg-amber-50 {
+  background-color: #292118 !important;
+  border-color: #4A3A25 !important;
+}
+
+html.dark .border-stone-100,
+html.dark .border-stone-200,
+html.dark .border-stone-300 {
+  border-color: #2E2925 !important;
+}
+
+html.dark .border-\[\#EAE3D9\] {
+  border-color: #2E2925 !important;
+}
+
+html.dark .text-stone-950,
+html.dark .text-stone-900,
+html.dark .text-stone-800 {
+  color: #FAF8F5 !important;
+}
+
+html.dark .text-stone-700,
+html.dark .text-stone-600 {
+  color: #D1C9BE !important;
+}
+
+html.dark .text-stone-500,
+html.dark .text-stone-400 {
+  color: #9C9388 !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #26221E !important;
+  color: #FAF8F5 !important;
+  border-color: #38322D !important;
+}
+
+html.dark #cart-panel {
+  background-color: #1A1816 !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark footer {
+  background-color: #151312 !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .resin-preview-box {
+  background: radial-gradient(circle at 30% 30%, #2A2521 0%, #1D1A17 70%, #151311 100%) !important;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark #custom-studio {
+  background: linear-gradient(to bottom, #171514, #121110) !important;
+  border-color: #2E2925 !important;
+}
+
+html.dark .cart-drawer-panel {
+  background-color: #1A1816 !important;
+  color: #FAF8F5 !important;
+}
+
+/* Scrollbar polish in dark mode */
+html.dark ::-webkit-scrollbar-track {
+  background: #171514;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #C59A65;
+}

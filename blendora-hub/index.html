@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLENDORA HUB | Handcrafted Resin Earrings, Necklaces & Keyholders</title>
+  <meta name="description" content="Handcrafted botanical resin jewelry & custom accessories. Discover clear resin earrings, floral pendant necklaces, and personalized initial keyholders made with love.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script>
+    // Immediate Theme Initialization to avoid white flash
+    if (localStorage.getItem('blendora_theme') === 'dark' || (!localStorage.getItem('blendora_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              sand: '#F7F3EE',
+              warm: '#C59A65',
+              dark: '#1E1B18',
+              rose: '#DCA596'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#FAF8F5] text-stone-900 antialiased selection:bg-amber-200 transition-colors duration-300">
+
+  <!-- TOP ANNOUNCEMENT BANNER -->
+  <div class="bg-stone-900 text-stone-200 text-xs py-2 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-3">
+    <span>✨ <strong>Spring Botanical Drop:</strong> Use code <span class="text-amber-300 font-bold tracking-wider">BLENDORA10</span> for 10% off your first order</span>
+    <span class="hidden md:inline text-stone-500">|</span>
+    <span class="hidden md:inline text-amber-200/90"><i class="fa-solid fa-truck-fast text-[10px] mr-1"></i> Custom & Worldwide Shipping Available</span>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#EAE3D9] transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-amber-200 flex items-center justify-center text-white shadow-md shadow-amber-900/10 group-hover:scale-105 transition">
+          <i class="fa-solid fa-gem text-lg"></i>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display text-xl sm:text-2xl font-bold tracking-widest text-stone-900 leading-none">BLENDORA</span>
+          <span class="text-[9px] uppercase tracking-[0.28em] text-amber-800 font-semibold mt-1">Resin Art & Jewelry</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-stone-700">
+        <a href="#collections" class="hover:text-amber-700 transition">Collections</a>
+        <a href="#earrings" onclick="filterCategory('earrings')" class="hover:text-amber-700 transition">Earrings</a>
+        <a href="#necklaces" onclick="filterCategory('necklaces')" class="hover:text-amber-700 transition">Necklaces</a>
+        <a href="#keyholders" onclick="filterCategory('keyholders')" class="hover:text-amber-700 transition">Keyholders</a>
+        <a href="#custom-studio" class="text-amber-800 hover:text-amber-900 font-semibold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+          <span>Custom Studio</span>
+        </a>
+        <a href="#resin-care" class="hover:text-amber-700 transition">Resin Care</a>
+        <a href="#about" class="hover:text-amber-700 transition">Our Story</a>
+      </nav>
+
+      <!-- Action Utilities -->
+      <div class="flex items-center gap-3">
+        <!-- Dark/Light Theme Toggle -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center text-stone-700 hover:text-amber-600 transition" title="Toggle Dark/Light Mode">
+          <i id="theme-toggle-icon" class="fa-solid fa-moon text-sm"></i>
+        </button>
+
+        <!-- Currency Selector -->
+        <div class="relative">
+          <select id="currency-select" class="text-xs bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-lg py-1.5 px-2.5 font-semibold text-stone-800 cursor-pointer focus:outline-none transition">
+            <!-- Injected by JS -->
+          </select>
+        </div>
+
+        <!-- Wishlist Button -->
+        <button onclick="document.getElementById('collections').scrollIntoView({behavior:'smooth'})" class="relative w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center text-stone-700 hover:text-rose-600 hover:border-rose-300 transition">
+          <i class="fa-regular fa-heart"></i>
+          <span id="wishlist-count" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
+
+        <!-- Cart Trigger Button -->
+        <button class="toggle-cart-btn relative px-3.5 py-2 rounded-xl bg-stone-900 text-white hover:bg-amber-800 transition flex items-center gap-2.5 shadow-sm">
+          <i class="fa-solid fa-bag-shopping text-sm"></i>
+          <span class="text-xs font-semibold tracking-wide uppercase hidden sm:inline">Bag</span>
+          <span class="cart-count-badge hidden bg-amber-400 text-stone-900 font-extrabold text-[10px] px-1.5 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
+    <!-- Decorative background elements -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-amber-100/60 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 bg-rose-100/60 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 border border-amber-200 text-amber-900 text-xs font-semibold tracking-wide uppercase">
+            <i class="fa-solid fa-sparkles text-amber-600"></i>
+            <span>Pure Botanical Artistry</span>
+          </div>
+
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-stone-950 leading-[1.15]">
+            Preserving Nature’s Bloom in <span class="italic font-normal text-amber-800">Crystal Clear</span> Resin.
+          </h1>
+
+          <p class="text-stone-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 font-light leading-relaxed">
+            From real pressed florals locked in timeless pendant necklaces to shimmering artisanal earrings and bespoke monogram keyholders—crafted with premium, non-yellowing eco resin.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+            <a href="#collections" class="px-7 py-3.5 rounded-xl bg-stone-900 hover:bg-amber-800 text-white font-medium text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+              <span>Explore Collections</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+            <a href="#custom-studio" class="px-7 py-3.5 rounded-xl bg-white border border-stone-300 hover:border-stone-900 text-stone-800 font-medium text-sm transition-all shadow-sm flex items-center justify-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-700"></i>
+              <span>Design Your Own Piece</span>
+            </a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="pt-8 border-t border-stone-200/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-hand-holding-heart text-amber-700 text-lg"></i>
+              <div>
+                <p class="text-xs font-bold text-stone-900">100% Handmade</p>
+                <p class="text-[11px] text-stone-500">Each piece unique</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-sun text-amber-700 text-lg"></i>
+              <div>
+                <p class="text-xs font-bold text-stone-900">UV-Resistant</p>
+                <p class="text-[11px] text-stone-500">Non-yellowing resin</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-shield-halved text-amber-700 text-lg"></i>
+              <div>
+                <p class="text-xs font-bold text-stone-900">Hypoallergenic</p>
+                <p class="text-[11px] text-stone-500">Nickel & lead free</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-comments text-amber-700 text-lg"></i>
+              <div>
+                <p class="text-xs font-bold text-stone-900">Bespoke Orders</p>
+                <p class="text-[11px] text-stone-500">WhatsApp assisted</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Hero Visual Showcase -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
+            
+            <!-- Main Hero Image Showcase -->
+            <div class="rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 aspect-[4/5] relative bg-stone-100">
+              <img 
+                src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=1000&q=85" 
+                alt="Blendora Hub Handcrafted Resin Jewelry" 
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"></div>
+              
+              <div class="absolute bottom-6 left-6 right-6 text-white">
+                <span class="px-2.5 py-1 text-[11px] font-bold rounded-md bg-amber-500 text-stone-950 uppercase tracking-wider">
+                  Featured Creation
+                </span>
+                <h3 class="font-serif text-xl sm:text-2xl font-bold mt-2">Botanical Terrarium Collection</h3>
+                <p class="text-xs text-stone-200 mt-1 font-light">Enclosed miniature wild flora in crystal optical resin.</p>
+              </div>
+            </div>
+
+            <!-- Floating Product Floating Pill 1 -->
+            <div class="absolute -top-4 -left-6 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-stone-200 hidden sm:flex items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=150&q=80" alt="Rose Petal Dangles" class="w-12 h-12 rounded-xl object-cover">
+              <div>
+                <span class="text-[10px] font-bold text-amber-700 uppercase">Earrings</span>
+                <h4 class="text-xs font-bold text-stone-900">Gilded Petal Dangles</h4>
+                <div class="flex text-amber-500 text-[10px] mt-0.5">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Product Floating Pill 2 -->
+            <div class="absolute -bottom-6 -right-6 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-stone-200 hidden sm:flex items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=150&q=80" alt="Resin Initial Keychain" class="w-12 h-12 rounded-xl object-cover">
+              <div>
+                <span class="text-[10px] font-bold text-amber-700 uppercase">Keyholder</span>
+                <h4 class="text-xs font-bold text-stone-900">Custom Monogram Tag</h4>
+                <p class="text-[11px] text-stone-500 font-medium">Over 100+ Custom Ordered</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 CATEGORY SHOWCASE HIGHLIGHT CARDS -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Category 1: Earrings -->
+      <div onclick="filterCategory('earrings')" class="group relative h-64 rounded-2xl overflow-hidden cursor-pointer shadow-md">
+        <img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=80" alt="Resin Earrings" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent"></div>
+        <div class="absolute bottom-6 left-6 right-6 text-white">
+          <span class="text-xs uppercase font-semibold text-amber-300 tracking-wider">Hand-Poured</span>
+          <h3 class="font-serif text-2xl font-bold mt-1">Resin Earrings</h3>
+          <p class="text-xs text-stone-300 mt-1">Botanical studs, oceanic waves & gilded drop dangles.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-200 mt-3 group-hover:translate-x-1 transition">
+            Shop Earrings <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Category 2: Necklaces -->
+      <div onclick="filterCategory('necklaces')" class="group relative h-64 rounded-2xl overflow-hidden cursor-pointer shadow-md">
+        <img src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=800&q=80" alt="Resin Necklaces" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent"></div>
+        <div class="absolute bottom-6 left-6 right-6 text-white">
+          <span class="text-xs uppercase font-semibold text-amber-300 tracking-wider">Botanical Terrariums</span>
+          <h3 class="font-serif text-2xl font-bold mt-1">Resin Necklaces</h3>
+          <p class="text-xs text-stone-300 mt-1">Real pressed petals, celestial orbs & ocean driftwoods.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-200 mt-3 group-hover:translate-x-1 transition">
+            Shop Necklaces <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Category 3: Keyholders -->
+      <div onclick="filterCategory('keyholders')" class="group relative h-64 rounded-2xl overflow-hidden cursor-pointer shadow-md">
+        <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80" alt="Resin Keyholders" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent"></div>
+        <div class="absolute bottom-6 left-6 right-6 text-white">
+          <span class="text-xs uppercase font-semibold text-amber-300 tracking-wider">Keepsakes & Charms</span>
+          <h3 class="font-serif text-2xl font-bold mt-1">Resin Keyholders</h3>
+          <p class="text-xs text-stone-300 mt-1">Personalized initials, shakers, motel tags & wristlets.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-200 mt-3 group-hover:translate-x-1 transition">
+            Shop Keyholders <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAIN CATALOG & FILTER SECTION -->
+  <section id="collections" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-800">The Catalog</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 mt-1">Curated Resin Collections</h2>
+        <p class="text-stone-500 text-sm mt-1">Find your next everyday statement or custom botanical gift.</p>
+      </div>
+
+      <!-- Live Search & Sorting Controls -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Search bar -->
+        <div class="relative w-full sm:w-64">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search earrings, petals, keys..." 
+            class="w-full pl-9 pr-4 py-2 bg-white border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600 transition"
+          />
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-xs"></i>
+        </div>
+
+        <!-- Sort Select -->
+        <select id="sort-select" class="bg-white border border-stone-200 rounded-xl py-2 px-3 text-xs text-stone-700 focus:outline-none focus:border-amber-600">
+          <option value="featured">Sort by: Featured</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Highest Rated</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div class="flex flex-wrap gap-2 pb-6 border-b border-stone-200 mb-8">
+      <button class="category-btn active px-4 py-2 rounded-xl text-xs font-semibold tracking-wide uppercase bg-stone-900 text-white transition" data-category="all">
+        All Creations
+      </button>
+      <button class="category-btn px-4 py-2 rounded-xl text-xs font-semibold tracking-wide uppercase bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="earrings">
+        Earrings
+      </button>
+      <button class="category-btn px-4 py-2 rounded-xl text-xs font-semibold tracking-wide uppercase bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="necklaces">
+        Necklaces
+      </button>
+      <button class="category-btn px-4 py-2 rounded-xl text-xs font-semibold tracking-wide uppercase bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="keyholders">
+        Keyholders & Keychains
+      </button>
+    </div>
+
+    <!-- Products Grid (Rendered by JS) -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Injected by products.js / app.js -->
+    </div>
+  </section>
+
+  <!-- INTERACTIVE CUSTOM RESIN STUDIO -->
+  <section id="custom-studio" class="py-20 bg-gradient-to-b from-stone-100 to-white relative overflow-hidden border-y border-[#EAE3D9]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 border border-amber-200 text-amber-900 text-xs font-bold uppercase tracking-wider mb-2">
+          <i class="fa-solid fa-palette text-amber-600"></i>
+          <span>Bespoke Artisan Studio</span>
+        </div>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-950">Design Your Own Resin Piece</h2>
+        <p class="text-stone-600 text-sm mt-2 font-light">
+          Choose your base mold, dried botanicals, metallic foil accents, and personalize with custom initials or names. Watch your piece come alive in real-time.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Left: Interactive Visualizer Mold -->
+        <div class="lg:col-span-5 flex flex-col items-center">
+          <div class="resin-preview-box">
+            <!-- Sparkle Glitter Background particles -->
+            <div class="glitter-particle w-3 h-3 top-10 left-12"></div>
+            <div class="glitter-particle w-2 h-2 top-20 right-14" style="animation-delay: 0.8s;"></div>
+            <div class="glitter-particle w-2.5 h-2.5 bottom-12 left-20" style="animation-delay: 1.4s;"></div>
+            <div class="glitter-particle w-3 h-3 bottom-16 right-16" style="animation-delay: 2s;"></div>
+
+            <!-- Mold Dome Simulator -->
+            <div id="interactive-resin-mold" class="resin-pendant-mold relative flex items-center justify-center">
+              <!-- Internal floral color hue -->
+              <div id="resin-preview-floral" class="absolute inset-0 rounded-inherit opacity-70 transition-all duration-500"></div>
+              
+              <!-- Floating Gold Specks -->
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-80">
+                <i class="fa-solid fa-sparkles text-amber-300 text-xl animate-pulse"></i>
+              </div>
+
+              <!-- Monogram/Letter Display -->
+              <div id="resin-preview-letter" class="relative z-10 font-serif text-5xl font-bold text-stone-900 drop-shadow-sm select-none">
+                B
+              </div>
+            </div>
+
+            <!-- Hardware Badge Indicator -->
+            <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-stone-200 text-[11px] font-semibold text-stone-700 shadow-sm">
+              Finish: <span id="resin-preview-hardware" class="text-amber-800">14K Gold</span>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-stone-400 mt-3 text-center italic">
+            *Digital mock-up preview. Handcrafted cured pieces feature genuine organic botanicals and foil flakes.
+          </p>
+        </div>
+
+        <!-- Right: Studio Controls Form -->
+        <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-lg space-y-6">
+          
+          <!-- Step 1: Base Piece -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-2">
+              1. Select Base Piece
+            </label>
+            <select id="custom-base-select" class="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-600">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <!-- Step 2: Preserved Flora -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-2">
+              2. Choose Real Preserved Botanicals
+            </label>
+            <div id="custom-floral-options" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Step 3: Metallic Inclusions & Hardware -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-2">
+                3. Luxe Inclusions
+              </label>
+              <select id="custom-inclusion-select" class="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium text-stone-800 focus:outline-none focus:border-amber-600">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-2">
+                4. Metal / Hardware Finish
+              </label>
+              <select id="custom-hardware-select" class="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium text-stone-800 focus:outline-none focus:border-amber-600">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Step 4: Personalization Text -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-2">
+              5. Personalization (Initial, Name or Word)
+            </label>
+            <input 
+              type="text" 
+              id="custom-text-input" 
+              value="B" 
+              maxlength="12" 
+              placeholder="e.g. B, SOPHIA, 1998, FOREVER"
+              class="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-sm font-semibold text-stone-900 focus:outline-none focus:border-amber-600 uppercase"
+            />
+          </div>
+
+          <!-- Bottom Price & Action Buttons -->
+          <div class="pt-6 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <span class="text-xs text-stone-400 uppercase tracking-wider block">Estimated Price</span>
+              <span id="custom-studio-price" class="text-2xl font-bold font-serif text-stone-950">
+                $18.50
+              </span>
+            </div>
+
+            <div class="flex flex-wrap gap-2.5 w-full sm:w-auto">
+              <button 
+                type="button" 
+                id="add-custom-to-cart-btn" 
+                class="flex-1 sm:flex-none px-5 py-3 rounded-xl bg-stone-900 hover:bg-[#b08552] text-white text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm"
+              >
+                <i class="fa-solid fa-cart-plus"></i>
+                <span>Add to Bag</span>
+              </button>
+
+              <button 
+                type="button" 
+                id="custom-whatsapp-direct-btn" 
+                class="flex-1 sm:flex-none px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm"
+              >
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span>Direct WhatsApp</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- RESIN CARE & CRAFT EXCELLENCE GUIDE -->
+  <section id="resin-care" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <span class="text-xs font-bold uppercase tracking-widest text-amber-800">Preserve The Shine</span>
+      <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-950 mt-1">Resin Care & Longevity Guide</h2>
+      <p class="text-stone-500 text-sm mt-2">
+        Every Blendora Hub piece is hand-poured with premium UV-stabilized jewelry grade resin. Follow these simple tips to keep your treasures pristine for years.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Tip 1 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm text-center flex flex-col items-center">
+        <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center text-xl mb-4 border border-amber-200/60">
+          <i class="fa-solid fa-sun"></i>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base mb-1.5">Avoid Direct Sun Storage</h3>
+        <p class="text-xs text-stone-500 leading-relaxed font-light">
+          While our resin contains advanced UV inhibitors, prolonged direct sun exposure on windowsills can soften cured resin over time. Store in a shaded jewelry box.
+        </p>
+      </div>
+
+      <!-- Tip 2 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm text-center flex flex-col items-center">
+        <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center text-xl mb-4 border border-amber-200/60">
+          <i class="fa-solid fa-spray-can-sparkles"></i>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base mb-1.5">Keep Away from Harsh Chemicals</h3>
+        <p class="text-xs text-stone-500 leading-relaxed font-light">
+          Apply your lotions, perfumes, and hairsprays before putting on your resin jewelry. Never expose resin to acetone, alcohol rubs, or chlorine pools.
+        </p>
+      </div>
+
+      <!-- Tip 3 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm text-center flex flex-col items-center">
+        <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center text-xl mb-4 border border-amber-200/60">
+          <i class="fa-solid fa-hand-sparkles"></i>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base mb-1.5">Gentle Microfiber Cleaning</h3>
+        <p class="text-xs text-stone-500 leading-relaxed font-light">
+          Wipe fingerprints or dust away with a soft, dry microfiber cloth. For stubborn residue, use lukewarm water and a drop of mild dish soap, then dry thoroughly.
+        </p>
+      </div>
+
+      <!-- Tip 4 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm text-center flex flex-col items-center">
+        <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center text-xl mb-4 border border-amber-200/60">
+          <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base mb-1.5">Scratch-Free Storage</h3>
+        <p class="text-xs text-stone-500 leading-relaxed font-light">
+          Resin is durable and impact resistant, but sharp metal objects like loose house keys can cause micro-scratches. Keep in individual pouches when traveling.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRAND STORY SECTION -->
+  <section id="about" class="py-20 bg-stone-900 text-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-400">The Artisan Touch</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2 leading-tight">
+            Crafting Miniature Masterpieces from Nature’s Fleeting Moments.
+          </h2>
+          <p class="text-stone-300 text-sm mt-4 font-light leading-relaxed">
+            At <strong>BLENDORA HUB</strong>, we believe every flower tells an intimate story. We hand-forage and ethically press wildflowers, garden roses, and delicate ferns at their peak vibrancy.
+          </p>
+          <p class="text-stone-300 text-sm mt-3 font-light leading-relaxed">
+            Using a slow 72-hour pressure-cure process, each earring pair, botanical pendant, and custom keyholder is crafted bubble-free with optical clarity comparable to mined quartz.
+          </p>
+
+          <div class="grid grid-cols-3 gap-6 pt-6 mt-6 border-t border-stone-800">
+            <div>
+              <p class="text-2xl sm:text-3xl font-serif font-bold text-amber-400">72 hrs</p>
+              <p class="text-xs text-stone-400 mt-1">Slow Cure Time</p>
+            </div>
+            <div>
+              <p class="text-2xl sm:text-3xl font-serif font-bold text-amber-400">100%</p>
+              <p class="text-xs text-stone-400 mt-1">Real Pressed Flora</p>
+            </div>
+            <div>
+              <p class="text-2xl sm:text-3xl font-serif font-bold text-amber-400">1,500+</p>
+              <p class="text-xs text-stone-400 mt-1">Happy Customers</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="rounded-3xl overflow-hidden border border-stone-700 shadow-2xl aspect-[4/3]">
+            <img src="https://images.unsplash.com/photo-1611591470404-33230a13346e?auto=format&fit=crop&w=900&q=80" alt="Resin artisan crafting" class="w-full h-full object-cover">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOMER REVIEWS & TESTIMONIALS -->
+  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-bold uppercase tracking-widest text-amber-800">Kind Words</span>
+      <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-950 mt-1">Loved by Resin Enthusiasts</h2>
+      <p class="text-stone-500 text-sm mt-2">See what our customers have to say about their Blendora Hub pieces.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Review 1 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex text-amber-500 text-xs mb-3">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <p class="text-stone-700 text-sm italic font-light leading-relaxed">
+            "The Gilded Rose Petal Dangles are so much prettier in person! They are super lightweight on my ears and don't tug at all. I received compliments the very first day I wore them."
+          </p>
+        </div>
+        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-stone-100">
+          <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs">
+            AL
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-stone-900">Amara L.</h4>
+            <span class="text-[10px] text-stone-400">Verified Buyer • Gilded Petal Dangles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 2 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex text-amber-500 text-xs mb-3">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <p class="text-stone-700 text-sm italic font-light leading-relaxed">
+            "I ordered custom initial keychains for my bridal party with lavender and gold flakes. The seller was responsive on WhatsApp, and everyone was blown away by the quality!"
+          </p>
+        </div>
+        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-stone-100">
+          <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs">
+            KC
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-stone-900">Khadijah C.</h4>
+            <span class="text-[10px] text-stone-400">Verified Buyer • Custom Monogram Keychains</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 3 -->
+      <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex text-amber-500 text-xs mb-3">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <p class="text-stone-700 text-sm italic font-light leading-relaxed">
+            "The Botanical Terrarium necklace has zero bubbles—pure crystal clarity. It looks like a high-end luxury boutique item. Packing was gorgeous too!"
+          </p>
+        </div>
+        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-stone-100">
+          <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs">
+            ER
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-stone-900">Elena R.</h4>
+            <span class="text-[10px] text-stone-400">Verified Buyer • Terrarium Necklace</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- NEWSLETTER SIGNUP -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-12">
+    <div class="rounded-3xl bg-amber-50 border border-amber-200 p-8 sm:p-12 text-center max-w-4xl mx-auto">
+      <span class="w-12 h-12 mx-auto rounded-full bg-amber-200/60 flex items-center justify-center text-amber-800 text-xl mb-3">
+        <i class="fa-regular fa-envelope-open"></i>
+      </span>
+      <h3 class="font-serif text-2xl sm:text-3xl font-bold text-stone-900">Join the Blendora VIP Bloom Club</h3>
+      <p class="text-stone-600 text-xs sm:text-sm max-w-md mx-auto mt-2">
+        Get 10% off your first handcrafted resin piece, early access to limited floral drops, and bespoke customization specials.
+      </p>
+
+      <form onsubmit="event.preventDefault(); showToast('Subscribed! Welcome to Blendora VIP.'); this.reset();" class="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input 
+          type="email" 
+          required 
+          placeholder="Enter your email address" 
+          class="flex-1 px-4 py-3 bg-white border border-stone-300 rounded-xl text-xs focus:outline-none focus:border-amber-700"
+        />
+        <button type="submit" class="px-6 py-3 rounded-xl bg-stone-900 hover:bg-amber-800 text-white font-semibold text-xs uppercase tracking-wider transition">
+          Subscribe
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-stone-200 pt-16 pb-12 text-stone-600 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10">
+      
+      <!-- Brand Info -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-amber-700 flex items-center justify-center text-white">
+            <i class="fa-solid fa-gem text-xs"></i>
+          </div>
+          <span class="font-display text-lg font-bold tracking-widest text-stone-900">BLENDORA HUB</span>
+        </div>
+        <p class="text-stone-500 leading-relaxed font-light">
+          Handcrafted botanical and artisanal resin earrings, necklaces, and personalized keyholders made with non-yellowing epoxy and love.
+        </p>
+        <div class="flex gap-4 text-stone-600 text-base">
+          <a href="#" class="hover:text-amber-700 transition"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="hover:text-amber-700 transition"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="https://wa.me/2349065108611" target="_blank" class="hover:text-emerald-600 transition" title="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" class="hover:text-amber-700 transition"><i class="fa-brands fa-pinterest"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Collections -->
+      <div>
+        <h4 class="font-bold text-stone-900 uppercase tracking-wider mb-4 text-xs">Collections</h4>
+        <ul class="space-y-2.5">
+          <li><a href="#earrings" onclick="filterCategory('earrings')" class="hover:text-amber-800 transition">Resin Earrings & Studs</a></li>
+          <li><a href="#necklaces" onclick="filterCategory('necklaces')" class="hover:text-amber-800 transition">Botanical Necklaces</a></li>
+          <li><a href="#keyholders" onclick="filterCategory('keyholders')" class="hover:text-amber-800 transition">Monogram Keyholders</a></li>
+          <li><a href="#custom-studio" class="hover:text-amber-800 transition">Custom Resin Studio</a></li>
+          <li><a href="#collections" class="hover:text-amber-800 transition">Best Sellers</a></li>
+        </ul>
+      </div>
+
+      <!-- Customer Care -->
+      <div>
+        <h4 class="font-bold text-stone-900 uppercase tracking-wider mb-4 text-xs">Customer Care</h4>
+        <ul class="space-y-2.5">
+          <li><a href="#resin-care" class="hover:text-amber-800 transition">Resin Care Guide</a></li>
+          <li><a href="#" onclick="showToast('Orders ship within 3-5 business days for curing.'); return false;" class="hover:text-amber-800 transition">Shipping & Curing Time</a></li>
+          <li><a href="#" onclick="showToast('Contact us via WhatsApp for custom bulk orders.'); return false;" class="hover:text-amber-800 transition">Custom & Bulk Orders</a></li>
+          <li><a href="#" onclick="showToast('Hypoallergenic warranty on all 14k gold-filled hooks.'); return false;" class="hover:text-amber-800 transition">Hypoallergenic Warranty</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="font-bold text-stone-900 uppercase tracking-wider mb-4 text-xs">Direct Inquiries</h4>
+        <p class="text-stone-500 mb-2">Have a custom bridal bouquet preservation or bespoke piece request?</p>
+        <p class="text-stone-900 font-semibold mb-1"><a href="https://wa.me/2349065108611" target="_blank" class="hover:text-emerald-600 transition"><i class="fa-brands fa-whatsapp text-emerald-600 mr-1.5"></i> +234 906 510 8611 (09065108611)</a></p>
+        <p class="text-stone-700 font-medium"><i class="fa-regular fa-envelope text-stone-400 mr-1.5"></i> hello@blendorahub.com</p>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-stone-200 text-stone-400 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px]">
+      <p>© 2026 BLENDORA HUB. All rights reserved. Handcrafted resin artistry.</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:underline">Privacy Policy</a>
+        <a href="#" class="hover:underline">Terms of Service</a>
+        <a href="admin.html" class="text-stone-700 hover:text-amber-800 font-bold flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-lg transition"><i class="fa-solid fa-lock text-[10px]"></i> Admin Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================ -->
+  <!-- MODALS & DRAWERS -->
+  <!-- ============================================================ -->
+
+  <!-- SLIDE-OVER CART DRAWER -->
+  <div id="cart-overlay" class="cart-drawer-overlay hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 opacity-0"></div>
+  <div id="cart-panel" class="cart-drawer-panel fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col translate-x-full">
+    
+    <!-- Cart Header -->
+    <div class="p-5 border-b border-stone-200 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-bag-shopping text-amber-800"></i>
+        <h3 class="font-serif text-lg font-bold text-stone-900">Shopping Bag</h3>
+        <span class="cart-count-badge bg-stone-100 text-stone-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+      </div>
+      <button id="close-cart-btn" class="p-2 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Cart Items Scroll Area -->
+    <div id="cart-items-container" class="flex-grow p-5 overflow-y-auto divide-y divide-stone-100">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Cart Footer -->
+    <div class="p-5 border-t border-stone-200 bg-stone-50 space-y-3">
+      <!-- Promo code input -->
+      <div class="flex gap-2">
+        <input 
+          type="text" 
+          id="promo-code-input" 
+          placeholder="Promo code (e.g. BLENDORA10)" 
+          class="flex-1 px-3 py-2 text-xs bg-white border border-stone-200 rounded-lg uppercase focus:outline-none focus:border-amber-700"
+        />
+        <button id="apply-promo-btn" class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-semibold rounded-lg transition">
+          Apply
+        </button>
+      </div>
+
+      <!-- Pricing Summary -->
+      <div class="space-y-1 text-xs text-stone-600 pt-2 border-t border-stone-200">
+        <div class="flex justify-between">
+          <span>Subtotal</span>
+          <span id="cart-subtotal" class="font-semibold text-stone-800">$0.00</span>
+        </div>
+        <div class="flex justify-between text-emerald-600">
+          <span>Discount</span>
+          <span id="cart-discount" class="font-semibold">-$0.00</span>
+        </div>
+        <div class="flex justify-between text-sm font-bold text-stone-900 pt-2 border-t border-stone-200">
+          <span>Total</span>
+          <span id="cart-total" class="font-serif text-base">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Checkout Options -->
+      <div class="space-y-2 pt-2">
+        <!-- WhatsApp Express Checkout -->
+        <button id="whatsapp-checkout-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm">
+          <i class="fa-brands fa-whatsapp text-base"></i>
+          <span>Express Checkout via WhatsApp</span>
+        </button>
+
+        <!-- Standard Web Checkout -->
+        <button id="standard-checkout-btn" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-lock text-xs"></i>
+          <span>Secure Web Checkout</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QUICK VIEW PRODUCT MODAL -->
+  <div id="product-detail-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button onclick="closeProductModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="modal-product-content">
+        <!-- Dynamic content from JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- STANDARD CHECKOUT MODAL -->
+  <div id="checkout-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl">
+      <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="font-serif text-2xl font-bold text-stone-900 mb-1">Complete Your Order</h3>
+      <p class="text-xs text-stone-500 mb-6">Total due: <span id="checkout-modal-total" class="font-bold text-stone-900 text-sm">$0.00</span></p>
+
+      <form onsubmit="processCheckoutOrder(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Full Name</label>
+          <input type="text" id="checkout-name" required placeholder="Jane Doe" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Email Address</label>
+          <input type="email" id="checkout-email" required placeholder="jane@example.com" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Delivery Address & Country</label>
+          <textarea id="checkout-address" required rows="2" placeholder="Street, Apt, City, Country" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+          Confirm & Place Resin Order
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ORDER SUCCESS CONFIRMATION MODAL -->
+  <div id="order-success-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-8 text-center shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3 class="font-serif text-2xl font-bold text-stone-900 mb-2">Order Confirmed!</h3>
+      <p class="text-xs text-stone-600 leading-relaxed mb-4">
+        Thank you for supporting handcrafted resin artistry. Your order reference is:
+      </p>
+      <div class="p-3 bg-stone-100 rounded-xl font-mono text-xs font-bold text-stone-800 mb-6" id="success-order-id">
+        BLN-000000
+      </div>
+      <button onclick="closeSuccessModal()" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+        Back to Gallery
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-notification" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white px-5 py-3 rounded-full text-xs font-medium shadow-2xl flex items-center gap-2 pointer-events-none">
+    <i class="fa-solid fa-circle-check text-amber-400"></i>
+    <span id="toast-message">Notification message</span>
+  </div>
+
+  <!-- Category filter helper for quick links -->
+  <script>
+    function filterCategory(cat) {
+      const targetBtn = document.querySelector(`.category-btn[data-category="${cat}"]`);
+      if (targetBtn) {
+        targetBtn.click();
+        document.getElementById('collections').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
+
+  <!-- Application Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

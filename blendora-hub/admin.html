@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal | BLENDORA HUB</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <script>
+    if (localStorage.getItem('blendora_theme') === 'dark' || (!localStorage.getItem('blendora_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* Dark Mode Overrides for Admin Portal */
+    html.dark body {
+      background-color: #0E0D0C !important;
+      color: #FAF8F5 !important;
+    }
+    html.dark header {
+      background-color: #171513 !important;
+      border-color: #26221E !important;
+    }
+    html.dark .bg-white {
+      background-color: #171513 !important;
+      border-color: #26221E !important;
+    }
+    html.dark .bg-stone-50 {
+      background-color: #201D1A !important;
+      border-color: #2A2520 !important;
+    }
+    html.dark .bg-stone-100 {
+      background-color: #24201D !important;
+      border-color: #2E2925 !important;
+    }
+    html.dark .border-stone-200,
+    html.dark .border-stone-100 {
+      border-color: #26221E !important;
+    }
+    html.dark .text-stone-900,
+    html.dark .text-stone-800 {
+      color: #FAF8F5 !important;
+    }
+    html.dark .text-stone-700,
+    html.dark .text-stone-600 {
+      color: #D1C9BE !important;
+    }
+    html.dark .text-stone-500,
+    html.dark .text-stone-400 {
+      color: #9C9388 !important;
+    }
+    html.dark input,
+    html.dark select,
+    html.dark textarea {
+      background-color: #221E1B !important;
+      color: #FAF8F5 !important;
+      border-color: #332D28 !important;
+    }
+    html.dark tr:hover {
+      background-color: #201D1A !important;
+    }
+  </style>
+</head>
+<body class="bg-[#F6F6F7] text-stone-900 antialiased min-h-screen transition-colors duration-300">
+
+  <!-- ============================================================ -->
+  <!-- 1. LOGIN SCREEN OVERLAY (Shown if not authenticated) -->
+  <!-- ============================================================ -->
+  <div id="admin-login-screen" class="fixed inset-0 z-50 bg-[#121110] flex items-center justify-center p-4">
+    <!-- Ambient glow decorative blobs -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-amber-800/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative w-full max-w-md bg-[#1C1A18] border border-stone-800 rounded-3xl p-8 sm:p-10 shadow-2xl text-white">
+      
+      <!-- Brand Logo -->
+      <div class="text-center mb-8">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-amber-200 flex items-center justify-center text-stone-950 shadow-lg shadow-amber-900/30">
+          <i class="fa-solid fa-gem text-2xl"></i>
+        </div>
+        <h1 class="font-bold text-xl tracking-widest uppercase text-stone-100">BLENDORA HUB</h1>
+        <p class="text-xs text-amber-400 font-semibold uppercase tracking-wider mt-1">Merchant Admin Center</p>
+        <p class="text-stone-400 text-xs mt-2 font-light">Sign in with your verified merchant credentials to manage orders and inventory.</p>
+      </div>
+
+      <!-- Error Notification Banner -->
+      <div id="login-error-banner" class="hidden mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5">
+        <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+        <span id="login-error-msg">Invalid login credentials.</span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-300 mb-1.5">
+            Admin Email Address
+          </label>
+          <div class="relative">
+            <input 
+              type="email" 
+              id="login-email-input" 
+              required 
+              placeholder="Enter your admin email" 
+              class="w-full pl-10 pr-4 py-3 bg-[#262320] border border-stone-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 transition"
+            />
+            <i class="fa-regular fa-envelope absolute left-3.5 top-3.5 text-stone-400 text-xs"></i>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-300">
+              Admin Password
+            </label>
+            <span class="text-[10px] text-amber-400 cursor-pointer hover:underline" onclick="togglePasswordVisibility()">Show / Hide</span>
+          </div>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="login-password-input" 
+              required 
+              placeholder="Enter your admin password" 
+              autocomplete="current-password"
+              class="w-full pl-10 pr-10 py-3 bg-[#262320] border border-stone-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 transition"
+            />
+            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-stone-400 text-xs"></i>
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-200">
+              <i id="password-toggle-icon" class="fa-regular fa-eye text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-stone-400 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="remember-me-checkbox" checked class="rounded border-stone-700 bg-stone-800 text-amber-600 focus:ring-0">
+            <span>Remember this device</span>
+          </label>
+          <a href="index.html" class="text-stone-400 hover:text-stone-200 transition">Storefront ↗</a>
+        </div>
+
+        <button 
+          type="submit" 
+          id="login-submit-btn"
+          class="w-full py-3.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 rounded-xl text-xs font-bold uppercase tracking-wider transition shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2 mt-4"
+        >
+          <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
+          <span>Log In to Blendora Admin</span>
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 2. MAIN APP LAYOUT (Shown once logged in) -->
+  <!-- ============================================================ -->
+  <div id="admin-app-layout" class="hidden min-h-screen flex w-full">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-64 bg-[#1A1A1A] text-white flex-shrink-0 flex flex-col justify-between hidden md:flex min-h-screen border-r border-stone-800">
+      <div>
+        <!-- Brand Header -->
+        <div class="h-16 px-6 border-b border-stone-800 flex items-center justify-between">
+          <a href="admin.html" class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-amber-600 flex items-center justify-center text-white text-xs font-bold">
+              <i class="fa-solid fa-gem"></i>
+            </div>
+            <span class="font-bold tracking-wider text-sm text-stone-100">BLENDORA HUB</span>
+          </a>
+          <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            Admin
+          </span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="p-3 space-y-1 text-xs font-medium">
+          <a href="#dashboard" data-tab="dashboard" class="admin-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-stone-800 text-amber-400 font-semibold transition">
+            <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <a href="#orders" data-tab="orders" class="admin-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-stone-800/60 transition">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-bag-shopping w-4 text-center"></i>
+              <span>Orders & Curing</span>
+            </div>
+            <span id="nav-unfulfilled-count" class="bg-amber-600/30 text-amber-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+          </a>
+
+          <a href="#customers" data-tab="customers" class="admin-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-stone-800/60 transition">
+            <i class="fa-solid fa-users w-4 text-center"></i>
+            <span>Customers</span>
+          </a>
+
+          <a href="#products" data-tab="products" class="admin-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-stone-800/60 transition">
+            <i class="fa-solid fa-gem w-4 text-center"></i>
+            <span>Products & Stock</span>
+          </a>
+
+          <a href="#discounts" data-tab="discounts" class="admin-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-stone-800/60 transition">
+            <i class="fa-solid fa-tag w-4 text-center"></i>
+            <span>Discounts & Promos</span>
+          </a>
+
+          <a href="#settings" data-tab="settings" class="admin-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-stone-800/60 transition">
+            <i class="fa-solid fa-gear w-4 text-center"></i>
+            <span>Store Settings</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Bottom: User Card & Storefront link -->
+      <div class="p-4 border-t border-stone-800 space-y-2">
+        <a href="index.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white text-xs font-medium transition border border-stone-800">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-store text-amber-400"></i>
+            <span>View Live Store</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+
+        <button onclick="handleAdminLogout()" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-stone-400 hover:text-rose-400 hover:bg-rose-950/20 text-xs font-medium transition">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+            <span>Sign Out</span>
+          </span>
+          <span class="text-[10px] text-stone-500">Lock</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="flex-grow flex flex-col min-h-screen min-w-0">
+      
+      <!-- TOP HEADER BAR -->
+      <header class="h-16 bg-white border-b border-stone-200 px-6 flex items-center justify-between flex-shrink-0">
+        <!-- Mobile brand -->
+        <div class="flex items-center gap-3 md:hidden">
+          <span class="text-xs font-bold text-stone-900">BLENDORA HUB</span>
+        </div>
+
+        <!-- WhatsApp Hotline Status -->
+        <div class="hidden sm:flex items-center gap-4">
+          <div class="flex items-center gap-2 text-xs text-stone-600 bg-stone-100 px-3 py-1.5 rounded-full border border-stone-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>WhatsApp Orders Hotline: <strong class="text-stone-900">09065108611</strong></span>
+          </div>
+        </div>
+
+        <!-- Authenticated Admin Profile -->
+        <div class="flex items-center gap-3">
+          <!-- Dark/Light Theme Toggle -->
+          <button id="admin-theme-toggle-btn" onclick="toggleAdminTheme()" class="w-9 h-9 rounded-xl border border-stone-200 bg-stone-50 flex items-center justify-center text-stone-700 hover:text-amber-600 transition" title="Toggle Dark/Light Mode">
+            <i id="admin-theme-toggle-icon" class="fa-solid fa-moon text-xs"></i>
+          </button>
+
+          <a href="index.html" class="text-xs font-semibold text-stone-700 hover:text-stone-900 flex items-center gap-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 px-3 py-1.5 rounded-xl transition">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+            <span>Storefront</span>
+          </a>
+
+          <div class="flex items-center gap-2.5 pl-3 border-l border-stone-200">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 text-stone-950 font-bold flex items-center justify-center text-xs shadow-sm">
+              AA
+            </div>
+            <div class="hidden sm:block text-left">
+              <p class="text-xs font-bold text-stone-900 leading-none">Abdullahi Abbas</p>
+              <p class="text-[10px] text-stone-500 truncate max-w-[150px]">abbdullahiabbas@gmail.com</p>
+            </div>
+            <button onclick="handleAdminLogout()" title="Sign out" class="text-stone-400 hover:text-rose-600 p-1.5 transition ml-1">
+              <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT VIEWS WRAPPER -->
+      <main class="flex-grow p-6 lg:p-8 overflow-y-auto">
+
+        <!-- ============================================================ -->
+        <!-- VIEW 1: DASHBOARD -->
+        <!-- ============================================================ -->
+        <div id="view-dashboard" class="admin-view space-y-8">
+          
+          <!-- Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-serif text-2xl lg:text-3xl font-bold text-stone-900">Store Overview</h1>
+              <p class="text-xs text-stone-500 mt-1">Welcome back, <strong>Abdullahi</strong>. Here is what is happening with Blendora Hub today.</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="exportStoreData()" class="px-3.5 py-2 rounded-xl bg-white border border-stone-200 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-download"></i>
+                <span>Export JSON</span>
+              </button>
+              <button onclick="openAddProductModal()" class="px-3.5 py-2 rounded-xl bg-stone-900 text-white text-xs font-semibold hover:bg-stone-800 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Product</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 KPI Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- KPI 1 -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-stone-400">Total Sales</span>
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-dollar-sign"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h2 id="kpi-revenue" class="text-2xl font-bold font-serif text-stone-900">$236.79</h2>
+                <p class="text-[11px] text-emerald-600 font-medium mt-1 flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-trend-up"></i> +18.4% from last week
+                </p>
+              </div>
+            </div>
+
+            <!-- KPI 2 -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-stone-400">Total Orders</span>
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h2 id="kpi-orders" class="text-2xl font-bold font-serif text-stone-900">5</h2>
+                <p class="text-[11px] text-stone-500 font-medium mt-1">Web + WhatsApp orders</p>
+              </div>
+            </div>
+
+            <!-- KPI 3: In 72-Hour Curing -->
+            <div class="bg-white p-5 rounded-2xl border border-amber-200 bg-amber-50/20 shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-800">In 72h Curing</span>
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h2 id="kpi-curing" class="text-2xl font-bold font-serif text-amber-900">2</h2>
+                <p class="text-[11px] text-amber-700 font-medium mt-1">Slow pressure curing queue</p>
+              </div>
+            </div>
+
+            <!-- KPI 4 -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-stone-400">Active Customers</span>
+                <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-users"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h2 id="kpi-customers" class="text-2xl font-bold font-serif text-stone-900">5</h2>
+                <p class="text-[11px] text-stone-500 font-medium mt-1">Verified buyer database</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Orders Card -->
+          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-stone-200 flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-sm text-stone-900">Recent Customer Orders</h3>
+                <p class="text-xs text-stone-400 mt-0.5">Track fulfillment and resin curing progress</p>
+              </div>
+              <button onclick="switchTab('orders')" class="text-xs font-semibold text-amber-800 hover:underline">
+                View All Orders →
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-500 border-b border-stone-200">
+                    <th class="py-3 px-4">Order ID</th>
+                    <th class="py-3 px-4">Customer</th>
+                    <th class="py-3 px-4">Date</th>
+                    <th class="py-3 px-4">Total</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-recent-orders-table">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 2: ORDERS MANAGEMENT -->
+        <!-- ============================================================ -->
+        <div id="view-orders" class="admin-view hidden space-y-6">
+          <div>
+            <h1 class="font-serif text-2xl lg:text-3xl font-bold text-stone-900">Orders & Fulfillment</h1>
+            <p class="text-xs text-stone-500 mt-1">Manage orders, update curing queue, and notify customers on WhatsApp.</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+              <!-- Tabs -->
+              <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                <button class="order-status-tab border-b-2 border-amber-600 pb-1 px-3 text-amber-800 font-bold" data-status="all">All Orders</button>
+                <button class="order-status-tab border-b-2 border-transparent pb-1 px-3 text-stone-500 hover:text-stone-800" data-status="Pending">Pending</button>
+                <button class="order-status-tab border-b-2 border-transparent pb-1 px-3 text-stone-500 hover:text-stone-800" data-status="In Curing">In Curing (72h)</button>
+                <button class="order-status-tab border-b-2 border-transparent pb-1 px-3 text-stone-500 hover:text-stone-800" data-status="Shipped">Shipped</button>
+                <button class="order-status-tab border-b-2 border-transparent pb-1 px-3 text-stone-500 hover:text-stone-800" data-status="Delivered">Delivered</button>
+              </div>
+
+              <!-- Search -->
+              <div class="relative w-full md:w-72">
+                <input 
+                  type="text" 
+                  id="order-search-input" 
+                  placeholder="Search by order ID, name or email..." 
+                  class="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600"
+                />
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-xs"></i>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-500 border-b border-stone-200">
+                    <th class="py-3 px-4">Order</th>
+                    <th class="py-3 px-4">Date</th>
+                    <th class="py-3 px-4">Customer</th>
+                    <th class="py-3 px-4">Items</th>
+                    <th class="py-3 px-4">Total</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 3: CUSTOMERS -->
+        <!-- ============================================================ -->
+        <div id="view-customers" class="admin-view hidden space-y-6">
+          <div>
+            <h1 class="font-serif text-2xl lg:text-3xl font-bold text-stone-900">Customers</h1>
+            <p class="text-xs text-stone-500 mt-1">Customer profiles, order frequency, and direct WhatsApp contact.</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+            <div class="relative max-w-sm">
+              <input 
+                type="text" 
+                id="customer-search-input" 
+                placeholder="Search customers by name, phone or email..." 
+                class="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600"
+              />
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-xs"></i>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-500 border-b border-stone-200">
+                    <th class="py-3 px-4">Customer</th>
+                    <th class="py-3 px-4">Email</th>
+                    <th class="py-3 px-4">Phone</th>
+                    <th class="py-3 px-4">Orders</th>
+                    <th class="py-3 px-4">Total Spent</th>
+                    <th class="py-3 px-4 text-right">Quick Contact</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 4: PRODUCTS & INVENTORY -->
+        <!-- ============================================================ -->
+        <div id="view-products" class="admin-view hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-serif text-2xl lg:text-3xl font-bold text-stone-900">Products & Inventory</h1>
+              <p class="text-xs text-stone-500 mt-1">Manage handcrafted earrings, necklaces, and keyholders.</p>
+            </div>
+            <button onclick="openAddProductModal()" class="px-4 py-2 bg-stone-900 text-white rounded-xl text-xs font-semibold hover:bg-stone-800 transition flex items-center gap-1.5 self-start">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add New Product</span>
+            </button>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-500 border-b border-stone-200">
+                    <th class="py-3 px-4">Product</th>
+                    <th class="py-3 px-4">Price</th>
+                    <th class="py-3 px-4">Stock</th>
+                    <th class="py-3 px-4">Custom Option</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 5: DISCOUNTS & PROMO CODES -->
+        <!-- ============================================================ -->
+        <div id="view-discounts" class="admin-view hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-serif text-2xl lg:text-3xl font-bold text-stone-900">Discount Codes</h1>
+              <p class="text-xs text-stone-500 mt-1">Manage promotional coupons like BLENDORA10 and SPARKLE15.</p>
+            </div>
+            <button onclick="openAddDiscountModal()" class="px-4 py-2 bg-stone-900 text-white rounded-xl text-xs font-semibold hover:bg-stone-800 transition flex items-center gap-1.5 self-start">
+              <i class="fa-solid fa-plus"></i>
+              <span>Create Coupon</span>
+            </button>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-500 border-b border-stone-200">
+                    <th class="py-3 px-4">Coupon Code</th>
+                    <th class="py-3 px-4">Discount</th>
+                    <th class="py-3 px-4">Times Used</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Delete</th>
+                  </tr>
+                </thead>
+                <tbody id="discounts-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 6: SETTINGS & ADMIN SECURITY -->
+        <!-- ============================================================ -->
+        <div id="view-settings" class="admin-view hidden space-y-6">
+          <div>
+            <h1 class="font-serif text-2xl lg:text-3xl font-bold text-stone-900">Store Settings & Security</h1>
+            <p class="text-xs text-stone-500 mt-1">Configure merchant WhatsApp number, curing times, and admin credentials.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- General Settings Form -->
+            <form onsubmit="handleSaveSettings(event)" class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+              <h3 class="font-bold text-sm text-stone-900 border-b border-stone-100 pb-3">General Store Configuration</h3>
+              
+              <div>
+                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Store Name</label>
+                <input type="text" id="setting-store-name" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium">
+              </div>
+
+              <!-- Default Currency Selector -->
+              <div>
+                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Default Storefront Currency</label>
+                <select id="setting-default-currency" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold text-stone-900">
+                  <option value="NGN">NGN (₦ - Nigerian Naira)</option>
+                  <option value="USD">USD ($ - US Dollar)</option>
+                  <option value="GBP">GBP (£ - British Pound)</option>
+                  <option value="EUR">EUR (€ - Euro)</option>
+                </select>
+                <p class="text-[10px] text-stone-400 mt-1">This sets the default currency your visitors see on the storefront.</p>
+              </div>
+
+              <!-- Exchange Rates -->
+              <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 space-y-2.5">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-700">Currency Exchange Rates (Base: $1 USD)</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <div>
+                    <label class="block text-[10px] text-stone-500 font-semibold mb-0.5">NGN (₦)</label>
+                    <input type="number" id="setting-rate-ngn" step="1" class="w-full p-2 bg-white border border-stone-200 rounded-lg text-xs font-bold">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-stone-500 font-semibold mb-0.5">GBP (£)</label>
+                    <input type="number" id="setting-rate-gbp" step="0.01" class="w-full p-2 bg-white border border-stone-200 rounded-lg text-xs font-bold">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-stone-500 font-semibold mb-0.5">EUR (€)</label>
+                    <input type="number" id="setting-rate-eur" step="0.01" class="w-full p-2 bg-white border border-stone-200 rounded-lg text-xs font-bold">
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">WhatsApp Business Number (Hotline)</label>
+                <input type="text" id="setting-whatsapp" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium">
+                <p class="text-[10px] text-stone-400 mt-1">Current hotline: 09065108611</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Support Email</label>
+                <input type="email" id="setting-email" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Default Resin Curing Time (Hours)</label>
+                <input type="number" id="setting-curing-hours" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium">
+              </div>
+
+              <button type="submit" class="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                Save Settings
+              </button>
+            </form>
+
+            <!-- Admin Security & Password Change -->
+            <div class="space-y-6">
+              <!-- Admin Account Credentials Box -->
+              <form onsubmit="handleChangeAdminPassword(event)" class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <h3 class="font-bold text-sm text-stone-900 border-b border-stone-100 pb-3 flex items-center justify-between">
+                  <span>Admin Login Security</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Verified</span>
+                </h3>
+
+                <div>
+                  <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Primary Admin Email</label>
+                  <input type="email" readonly value="abbdullahiabbas@gmail.com" class="w-full p-2.5 bg-stone-100 border border-stone-200 rounded-xl text-xs font-semibold text-stone-700 cursor-not-allowed">
+                  <p class="text-[10px] text-stone-400 mt-1">Authorized owner account for Blendora Hub.</p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Change Admin Password</label>
+                  <input type="password" id="setting-new-password" placeholder="Enter new password" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium">
+                </div>
+
+                <button type="submit" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                  Update Admin Password
+                </button>
+              </form>
+
+              <!-- Data Management & Backups -->
+              <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-sm text-stone-900 border-b border-stone-100 pb-3">Database Backups</h3>
+                <p class="text-xs text-stone-500 leading-relaxed">
+                  Export orders, customers, products, and promo codes as a single JSON file.
+                </p>
+
+                <div class="flex gap-2 pt-2">
+                  <button onclick="exportStoreData()" class="flex-1 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-file-export"></i>
+                    <span>Export JSON</span>
+                  </button>
+                  <button onclick="resetDemoData()" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Reset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODALS -->
+  <!-- ============================================================ -->
+
+  <!-- MODAL: ORDER DETAILS & STATUS UPDATE -->
+  <div id="order-detail-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+      <button onclick="closeOrderDetailModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-stone-100 mb-6">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-stone-900">
+            Order <span id="modal-order-id-title" class="text-amber-800">BLN-000000</span>
+          </h3>
+          <p id="modal-order-date" class="text-xs text-stone-400 mt-0.5">Date</p>
+        </div>
+      </div>
+
+      <!-- Customer Summary & WhatsApp Button -->
+      <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h4 id="modal-customer-name" class="text-sm font-bold text-stone-900">Customer Name</h4>
+          <p id="modal-customer-email" class="text-xs text-stone-500">email@example.com</p>
+          <p id="modal-customer-phone" class="text-xs text-stone-500">+234 000 000 0000</p>
+          <p id="modal-customer-address" class="text-xs text-stone-600 mt-1 italic">Address</p>
+        </div>
+        
+        <a id="modal-customer-whatsapp-link" href="#" target="_blank" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+          <i class="fa-brands fa-whatsapp text-sm"></i>
+          <span>Message on WhatsApp</span>
+        </a>
+      </div>
+
+      <!-- Items List -->
+      <div class="mb-6">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-2">Order Items & Custom Specs</h4>
+        <div id="modal-order-items-list" class="space-y-2">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Totals Breakdown -->
+      <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 text-xs space-y-1 mb-6">
+        <div class="flex justify-between text-stone-600">
+          <span>Subtotal</span>
+          <span id="modal-order-subtotal" class="font-semibold">$0.00</span>
+        </div>
+        <div class="flex justify-between text-emerald-600">
+          <span>Discount</span>
+          <span id="modal-order-discount" class="font-semibold">-$0.00</span>
+        </div>
+        <div class="flex justify-between text-sm font-bold text-stone-900 pt-2 border-t border-stone-200">
+          <span>Total Paid</span>
+          <span id="modal-order-total" class="font-serif text-base">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Status Updater & Notes -->
+      <div class="space-y-4 pt-4 border-t border-stone-100">
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-700 mb-1">Update Fulfillment Status</label>
+          <select id="modal-order-status-select" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-amber-600">
+            <option value="Pending">Pending (New Order)</option>
+            <option value="In Curing">In Curing (72h Pressure Pot)</option>
+            <option value="Shipped">Shipped / Dispatched</option>
+            <option value="Delivered">Delivered & Complete</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-700 mb-1">Artisan Production Notes</label>
+          <textarea id="modal-order-notes" rows="2" placeholder="e.g. Extra gold flakes added, tracking number GIG-123..." class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-600"></textarea>
+        </div>
+
+        <button onclick="saveOrderChanges()" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+          Save Order Changes
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: ADD PRODUCT -->
+  <div id="add-product-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+      <button onclick="closeAddProductModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="font-serif text-xl font-bold text-stone-900 mb-1">Add New Resin Piece</h3>
+      <p class="text-xs text-stone-500 mb-5">Create a new earring, necklace or keyholder item.</p>
+
+      <form id="add-product-form" onsubmit="handleAddProduct(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Product Title</label>
+          <input type="text" id="new-prod-name" required placeholder="e.g. Celestial Violet Drop Earrings" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Category</label>
+            <select id="new-prod-category" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold">
+              <option value="earrings">Earrings</option>
+              <option value="necklaces">Necklaces</option>
+              <option value="keyholders">Keyholders</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Price (USD)</label>
+            <input type="number" step="0.01" id="new-prod-price" required placeholder="24.99" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold">
+          </div>
+        </div>
+
+        <!-- Image Selection: Local File Upload or URL -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold uppercase text-stone-600">Product Image</label>
+          
+          <!-- Hidden file input -->
+          <input type="file" id="new-prod-file" accept="image/*" class="hidden" onchange="handleProductImageFile(event, 'new')">
+          
+          <!-- Drop/Click upload zone -->
+          <div onclick="document.getElementById('new-prod-file').click()" class="border-2 border-dashed border-stone-300 hover:border-amber-500 p-4 rounded-2xl text-center cursor-pointer transition bg-stone-50 hover:bg-stone-100 flex flex-col items-center justify-center gap-1.5">
+            <i class="fa-solid fa-cloud-arrow-up text-xl text-amber-600"></i>
+            <span class="text-xs font-bold text-stone-800">Click to choose image from your device</span>
+            <span class="text-[11px] text-stone-400">PNG, JPG, WEBP, GIF (stored locally)</span>
+          </div>
+
+          <!-- URL fallback input -->
+          <div class="relative">
+            <input type="url" id="new-prod-image" oninput="handleProductImageURL(this.value, 'new')" placeholder="Or paste external image URL..." class="w-full pl-8 pr-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs">
+            <i class="fa-solid fa-link absolute left-2.5 top-2.5 text-stone-400 text-xs"></i>
+          </div>
+
+          <!-- Live Image Preview Box -->
+          <div id="new-prod-preview-box" class="hidden flex items-center gap-3 p-2.5 rounded-xl bg-amber-50/60 border border-amber-200">
+            <img id="new-prod-preview-img" src="" class="w-14 h-14 rounded-lg object-cover border border-amber-300">
+            <div class="flex-grow min-w-0">
+              <p class="text-xs font-bold text-stone-900 truncate">Selected Image</p>
+              <span class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-circle-check"></i> Image ready
+              </span>
+            </div>
+            <button type="button" onclick="clearProductImage('new')" class="text-stone-400 hover:text-rose-600 p-1 text-xs">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Stock Status</label>
+            <select id="new-prod-stock" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold">
+              <option value="In Stock">In Stock</option>
+              <option value="Low Stock">Low Stock</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+          </div>
+          <div class="flex items-center pt-5">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-stone-700">
+              <input type="checkbox" id="new-prod-customizable" checked class="rounded border-stone-300 text-amber-600">
+              <span>Allow Custom Orders</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Description & Materials</label>
+          <textarea id="new-prod-desc" rows="2" placeholder="Botanical elements, cured finish, hooks, hypoallergenic..." class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+          Add Piece to Store
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT PRODUCT -->
+  <div id="edit-product-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+      <button onclick="closeEditProductModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="font-serif text-xl font-bold text-stone-900 mb-1">Edit Resin Piece</h3>
+      <p class="text-xs text-stone-500 mb-5">Update pricing, photo, descriptions, or inventory status.</p>
+
+      <form id="edit-product-form" onsubmit="handleSaveEditedProduct(event)" class="space-y-4">
+        <!-- Hidden product ID -->
+        <input type="hidden" id="edit-prod-id">
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Product Title</label>
+          <input type="text" id="edit-prod-name" required class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Category</label>
+            <select id="edit-prod-category" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold">
+              <option value="earrings">Earrings</option>
+              <option value="necklaces">Necklaces</option>
+              <option value="keyholders">Keyholders</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Price (USD)</label>
+            <input type="number" step="0.01" id="edit-prod-price" required class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-bold">
+          </div>
+        </div>
+
+        <!-- Edit Image: Local File Upload or URL -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold uppercase text-stone-600">Product Image</label>
+          
+          <input type="file" id="edit-prod-file" accept="image/*" class="hidden" onchange="handleProductImageFile(event, 'edit')">
+          
+          <div onclick="document.getElementById('edit-prod-file').click()" class="border-2 border-dashed border-stone-300 hover:border-amber-500 p-3.5 rounded-2xl text-center cursor-pointer transition bg-stone-50 hover:bg-stone-100 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-camera text-amber-600 text-sm"></i>
+            <span class="text-xs font-bold text-stone-800">Upload replacement photo from device</span>
+          </div>
+
+          <div class="relative">
+            <input type="url" id="edit-prod-image" oninput="handleProductImageURL(this.value, 'edit')" placeholder="Or edit image URL..." class="w-full pl-8 pr-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs">
+            <i class="fa-solid fa-link absolute left-2.5 top-2.5 text-stone-400 text-xs"></i>
+          </div>
+
+          <!-- Current Image Preview -->
+          <div id="edit-prod-preview-box" class="flex items-center gap-3 p-2.5 rounded-xl bg-stone-50 border border-stone-200">
+            <img id="edit-prod-preview-img" src="" class="w-14 h-14 rounded-lg object-cover border border-stone-300">
+            <div class="flex-grow min-w-0">
+              <p class="text-xs font-bold text-stone-900 truncate" id="edit-prod-image-status">Current Active Image</p>
+              <span class="text-[10px] text-stone-500">Preview</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Stock Status</label>
+            <select id="edit-prod-stock" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold">
+              <option value="In Stock">In Stock</option>
+              <option value="Low Stock">Low Stock</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+          </div>
+          <div class="flex items-center pt-5">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-stone-700">
+              <input type="checkbox" id="edit-prod-customizable" class="rounded border-stone-300 text-amber-600">
+              <span>Allow Custom Orders</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Description</label>
+          <textarea id="edit-prod-desc" rows="2" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Materials & Specs</label>
+          <input type="text" id="edit-prod-materials" placeholder="Materials, dimensions..." class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs">
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition shadow-sm">
+          Save Product Changes
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD DISCOUNT -->
+  <div id="add-discount-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 relative shadow-2xl">
+      <button onclick="closeAddDiscountModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="font-serif text-xl font-bold text-stone-900 mb-4">Create Promo Code</h3>
+
+      <form id="add-discount-form" onsubmit="handleAddDiscount(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Coupon Code</label>
+          <input type="text" id="new-discount-code" required placeholder="e.g. BLOOM20" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs uppercase font-bold">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Discount Percentage (%)</label>
+          <input type="number" id="new-discount-percent" required min="1" max="100" placeholder="20" class="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs">
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+          Create Discount
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN TOAST NOTIFICATION -->
+  <div id="admin-toast" class="fixed bottom-6 right-6 z-50 bg-stone-900 text-white px-5 py-3 rounded-2xl text-xs font-semibold shadow-2xl flex items-center gap-2 transition-all duration-300 opacity-0 translate-y-8">
+    <i class="fa-solid fa-circle-check text-amber-400"></i>
+    <span id="admin-toast-msg">Action completed</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
